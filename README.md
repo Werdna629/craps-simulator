@@ -86,6 +86,22 @@ These are EV-neutral or clearly bounded, and kept simple on purpose:
 - At most one new come (and one don't-come) bet travels per roll, up to the
   configured maximum number of established points.
 
+## Deployment (GitHub Pages)
+
+The app is static, so it's hosted free on GitHub Pages from the `gh-pages`
+branch. Two workflows manage it:
+
+- **Deploy production** — on every push to `master`, builds and publishes to the
+  root: `https://werdna629.github.io/craps-simulator/`
+- **Deploy PR preview** — every open PR gets an isolated build at
+  `…/craps-simulator/pr-preview/pr-<N>/`, linked from a PR comment and removed
+  when the PR closes.
+
+Because previews live at subpaths, production builds use a **relative base**
+(`./`) so the same bundle works at any path. One-time repo setup: make the repo
+public (free Pages), and set **Settings → Pages → Source: Deploy from a branch →
+`gh-pages` / root**.
+
 ## Layout
 
 ```
