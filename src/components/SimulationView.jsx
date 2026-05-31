@@ -3,6 +3,7 @@ import { simulateBatch } from '../engine/simulator.js';
 import { computeStatistics } from '../engine/strategy.js';
 import { money, pct, signedMoney } from '../format.js';
 import Histogram from './Histogram.jsx';
+import NumberField from './NumberField.jsx';
 
 export default function SimulationView({ strategy }) {
   const [opts, setOpts] = useState({
@@ -22,7 +23,14 @@ export default function SimulationView({ strategy }) {
     // Defer so the button shows its busy state before the blocking compute.
     setTimeout(() => {
       const seed = opts.seed === '' ? null : Number(opts.seed);
-      const r = simulateBatch(strategy, { ...opts, seed });
+      // Clamp to sane minimums in case a field was left blank/zero.
+      const r = simulateBatch(strategy, {
+        ...opts,
+        seed,
+        startingBankroll: Math.max(1, opts.startingBankroll),
+        maxRolls: Math.max(1, opts.maxRolls),
+        sessions: Math.max(1, opts.sessions),
+      });
       setResult(r);
       setRunning(false);
     }, 0);
@@ -34,14 +42,11 @@ export default function SimulationView({ strategy }) {
     <div className="sim-view">
       <div className="sim-controls">
         <label className="num"><span>starting bankroll $</span>
-          <input type="number" min={1} value={opts.startingBankroll}
-            onChange={(e) => set({ startingBankroll: Number(e.target.value) || 0 })} /></label>
+          <NumberField min={1} value={opts.startingBankroll} onChange={(v) => set({ startingBankroll: v })} /></label>
         <label className="num"><span>rolls / session</span>
-          <input type="number" min={1} value={opts.maxRolls}
-            onChange={(e) => set({ maxRolls: Number(e.target.value) || 1 })} /></label>
+          <NumberField min={1} value={opts.maxRolls} onChange={(v) => set({ maxRolls: v })} /></label>
         <label className="num"><span>sessions</span>
-          <input type="number" min={1} value={opts.sessions}
-            onChange={(e) => set({ sessions: Number(e.target.value) || 1 })} /></label>
+          <NumberField min={1} value={opts.sessions} onChange={(v) => set({ sessions: v })} /></label>
         <label className="num"><span>seed (blank = random)</span>
           <input type="number" value={opts.seed} placeholder="random"
             onChange={(e) => set({ seed: e.target.value })} /></label>

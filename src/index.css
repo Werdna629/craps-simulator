@@ -80,6 +80,7 @@ th { color: var(--muted); font-weight: 600; }
 .compare { margin: 22px 0; padding-top: 6px; border-top: 1px solid var(--border); }
 .compare tr.current { background: rgba(47, 129, 247, 0.14); }
 .compare tr.current td { font-weight: 600; }
+.sub { color: var(--muted); font-weight: 400; font-size: 11px; }
 
 /* Simulation view */
 .sim-controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 18px; }

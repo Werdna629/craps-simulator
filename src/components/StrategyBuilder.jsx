@@ -1,6 +1,7 @@
 import React from 'react';
 import { PLACE_NUMBERS } from '../engine/strategy.js';
 import { FIELD_VARIANTS, ODDS_MODES } from '../engine/bets.js';
+import NumberField from './NumberField.jsx';
 
 // A "take odds" checkbox for a line/come bet.
 function OddsToggle({ checked, disabled, onChange }) {
@@ -12,19 +13,12 @@ function OddsToggle({ checked, disabled, onChange }) {
   );
 }
 
-// A labeled number input that writes back a Number (never NaN).
+// A labeled number input.
 function Num({ label, value, onChange, min = 0, step = 1, width = 70 }) {
   return (
     <label className="num">
       <span>{label}</span>
-      <input
-        type="number"
-        min={min}
-        step={step}
-        value={value}
-        style={{ width }}
-        onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
-      />
+      <NumberField value={value} onChange={onChange} min={min} step={step} width={width} />
     </label>
   );
 }

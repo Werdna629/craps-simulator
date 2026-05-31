@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { computeStatistics, usesOdds } from '../engine/strategy.js';
 import { ODDS_MODES } from '../engine/bets.js';
 import { money, pct, signedMoney } from '../format.js';
+import NumberField from './NumberField.jsx';
 
 export default function StatisticalView({ strategy }) {
   const [rollsPerHour, setRollsPerHour] = useState(100);
@@ -35,8 +36,7 @@ export default function StatisticalView({ strategy }) {
         </div>
         <label className="num">
           <span>rolls / hour</span>
-          <input type="number" min={1} value={rollsPerHour} style={{ width: 70 }}
-            onChange={(e) => setRollsPerHour(Number(e.target.value) || 1)} />
+          <NumberField min={1} value={rollsPerHour} onChange={setRollsPerHour} />
         </label>
       </div>
 
@@ -64,15 +64,15 @@ export default function StatisticalView({ strategy }) {
         <div className="compare">
           <h3>Odds policy comparison</h3>
           <p className="hint">
-            Same flat bets, different maximum odds. Notice the expected dollar loss per roll
-            <strong> doesn't change</strong> — odds are a fair (0% edge) bet, so they never alter your
-            expectation in dollars. What improves is the <em>edge on total action</em>: you're putting more
-            money at fair odds, which dilutes the house edge across everything you wager (at the cost of
-            bigger swings — see the Simulated tab).
+            <strong>Your expected dollar loss is the same in every row — that's the point.</strong> Odds are
+            paid at true odds (0% edge), so they add exactly $0 to your expectation no matter how much you
+            take. Switching from 2× to 3-4-5× doesn't win or lose you money on average; it just pushes more
+            fair money through the table, which <em>dilutes the house edge on your total action</em> (the last
+            column) — at the cost of bigger swings, which you can see on the Simulated tab.
           </p>
           <table>
             <thead>
-              <tr><th>Odds policy</th><th>EV / roll</th><th>Action / roll</th><th>Edge on action</th></tr>
+              <tr><th>Odds policy</th><th>EV / roll<br /><span className="sub">(unchanged)</span></th><th>Action / roll</th><th>Edge on action<br /><span className="sub">(improves)</span></th></tr>
             </thead>
             <tbody>
               {comparison.map((c) => (
