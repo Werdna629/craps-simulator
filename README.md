@@ -57,11 +57,31 @@ the mean/median/spread, the % of sessions that finished profitable or busted, an
 a histogram of net results. It also reconciles the empirical edge against the
 theoretical EV.
 
+## Odds policy: table vs machine
+
+Odds are set by a single venue-level policy you can switch between and compare:
+
+- **3-4-5× (table)** — 3× behind 4/10, 4× behind 5/9, 5× behind 6/8 (the usual
+  live-table rule; it equalizes the win at 6× the flat on every point).
+- **flat N× (machine)** — the same multiple on every point; video craps is
+  typically a flat **2×**. Options for 1/2/3/5/10× are included.
+
+Each line/come bet chooses whether to back its point with odds. The Statistical
+tab includes a side-by-side comparison across all policies.
+
+Worth understanding: an odds bet is mathematically **fair** (0% edge), so adding
+more odds **does not change your expected dollar loss** — that's fixed by the
+flat bet. What it changes is the **blended edge on total action** (lower with
+more odds) and the **variance** of outcomes (higher). For pass-line with a flat
+bet, the combined edge on action is ~1.41% (no odds), ~0.61% (2×), ~0.37%
+(3-4-5×) — all on the *same* expected dollar loss.
+
 ## Modeling notes / simplifications
 
 These are EV-neutral or clearly bounded, and kept simple on purpose:
 
-- Odds are a single multiple of the base bet on every point (not 3-4-5x).
+- Don't-side lay odds use the same per-point stake multiple as the do-side
+  (consistent and fair, rather than casino-specific lay caps).
 - Come / don't-come odds are always working, including on the come-out roll.
 - At most one new come (and one don't-come) bet travels per roll, up to the
   configured maximum number of established points.

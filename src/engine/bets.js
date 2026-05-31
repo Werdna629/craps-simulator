@@ -38,6 +38,34 @@ export const DONT_ODDS_PAYOUTS = {
   10: [1, 2],
 };
 
+// Odds policy = how much you're allowed to put behind a point, as a multiple of
+// the flat bet. This is set by the venue: live tables typically allow 3-4-5x
+// (which equalizes the win at 6x the flat on every point), while video/machine
+// craps is usually a flat 2x on everything.
+export const ODDS_MODES = {
+  none: { label: 'No odds', perPoint: () => 0 },
+  '1x': { label: '1× (flat)', perPoint: () => 1 },
+  '2x': { label: '2× — machine', perPoint: () => 2 },
+  '3x': { label: '3× (flat)', perPoint: () => 3 },
+  '5x': { label: '5× (flat)', perPoint: () => 5 },
+  '10x': { label: '10× (flat)', perPoint: () => 10 },
+  '345': { label: '3-4-5× — table', perPoint: (p) => ({ 4: 3, 10: 3, 5: 4, 9: 4, 6: 5, 8: 5 }[p]) },
+};
+
+// Odds stake multiple for a given point under a policy.
+export function oddsMultipleForPoint(mode, point) {
+  return (ODDS_MODES[mode] || ODDS_MODES.none).perPoint(point) || 0;
+}
+
+// Expected odds stake per $1 of flat bet, per line decision: the point is
+// established with probability prob(p), and then `multiple(p)` is put behind it.
+export function expectedOddsStakePerDecision(mode) {
+  let m = 0;
+  for (const p of POINTS) m += prob(p) * oddsMultipleForPoint(mode, p);
+  return m;
+}
+
+
 // Field bet: one-roll bet that wins on 2,3,4,9,10,11,12.
 // Two common pay tables for the 2 and 12.
 export const FIELD_VARIANTS = {

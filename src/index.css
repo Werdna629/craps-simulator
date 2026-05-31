@@ -77,6 +77,10 @@ th { color: var(--muted); font-weight: 600; }
 .pos { color: var(--pos); }
 .empty { color: var(--muted); }
 
+.compare { margin: 22px 0; padding-top: 6px; border-top: 1px solid var(--border); }
+.compare tr.current { background: rgba(47, 129, 247, 0.14); }
+.compare tr.current td { font-weight: 600; }
+
 /* Simulation view */
 .sim-controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 18px; }
 .sim-controls button {

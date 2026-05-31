@@ -1,6 +1,16 @@
 import React from 'react';
 import { PLACE_NUMBERS } from '../engine/strategy.js';
-import { FIELD_VARIANTS } from '../engine/bets.js';
+import { FIELD_VARIANTS, ODDS_MODES } from '../engine/bets.js';
+
+// A "take odds" checkbox for a line/come bet.
+function OddsToggle({ checked, disabled, onChange }) {
+  return (
+    <label className="check" title={disabled ? 'Set odds policy above to enable' : ''}>
+      <input type="checkbox" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />
+      take odds
+    </label>
+  );
+}
 
 // A labeled number input that writes back a Number (never NaN).
 function Num({ label, value, onChange, min = 0, step = 1, width = 70 }) {
@@ -22,6 +32,7 @@ function Num({ label, value, onChange, min = 0, step = 1, width = 70 }) {
 export default function StrategyBuilder({ strategy, setStrategy }) {
   const set = (patch) => setStrategy({ ...strategy, ...patch });
   const setLine = (key, patch) => set({ [key]: { ...strategy[key], ...patch } });
+  const oddsOff = strategy.oddsMode === 'none';
 
   return (
     <div className="builder">
@@ -32,16 +43,28 @@ export default function StrategyBuilder({ strategy, setStrategy }) {
       </p>
 
       <section>
+        <h3>Odds policy</h3>
+        <label className="num">
+          <span>maximum odds allowed (the table / machine setting)</span>
+          <select value={strategy.oddsMode} onChange={(e) => set({ oddsMode: e.target.value })}>
+            {Object.entries(ODDS_MODES).map(([k, v]) => (
+              <option key={k} value={k}>{v.label}</option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      <section>
         <h3>Line bets</h3>
         <div className="row">
           <strong>Pass Line</strong>
           <Num label="bet $" value={strategy.passLine.amount} onChange={(v) => setLine('passLine', { amount: v })} />
-          <Num label="odds ×" value={strategy.passLine.oddsMultiple} onChange={(v) => setLine('passLine', { oddsMultiple: v })} />
+          <OddsToggle checked={strategy.passLine.takeOdds} disabled={oddsOff} onChange={(v) => setLine('passLine', { takeOdds: v })} />
         </div>
         <div className="row">
           <strong>Don't Pass</strong>
           <Num label="bet $" value={strategy.dontPass.amount} onChange={(v) => setLine('dontPass', { amount: v })} />
-          <Num label="odds ×" value={strategy.dontPass.oddsMultiple} onChange={(v) => setLine('dontPass', { oddsMultiple: v })} />
+          <OddsToggle checked={strategy.dontPass.takeOdds} disabled={oddsOff} onChange={(v) => setLine('dontPass', { takeOdds: v })} />
         </div>
       </section>
 
@@ -50,14 +73,14 @@ export default function StrategyBuilder({ strategy, setStrategy }) {
         <div className="row">
           <strong>Come</strong>
           <Num label="bet $" value={strategy.come.amount} onChange={(v) => setLine('come', { amount: v })} />
-          <Num label="odds ×" value={strategy.come.oddsMultiple} onChange={(v) => setLine('come', { oddsMultiple: v })} />
           <Num label="max #" value={strategy.come.maxBets} onChange={(v) => setLine('come', { maxBets: v })} />
+          <OddsToggle checked={strategy.come.takeOdds} disabled={oddsOff} onChange={(v) => setLine('come', { takeOdds: v })} />
         </div>
         <div className="row">
           <strong>Don't Come</strong>
           <Num label="bet $" value={strategy.dontCome.amount} onChange={(v) => setLine('dontCome', { amount: v })} />
-          <Num label="odds ×" value={strategy.dontCome.oddsMultiple} onChange={(v) => setLine('dontCome', { oddsMultiple: v })} />
           <Num label="max #" value={strategy.dontCome.maxBets} onChange={(v) => setLine('dontCome', { maxBets: v })} />
+          <OddsToggle checked={strategy.dontCome.takeOdds} disabled={oddsOff} onChange={(v) => setLine('dontCome', { takeOdds: v })} />
         </div>
       </section>
 

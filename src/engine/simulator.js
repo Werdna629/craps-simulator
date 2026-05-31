@@ -8,7 +8,7 @@
 //     configured maxBets number of established points.
 
 import { rollDie } from './dice.js';
-import { PLACE_PAYOUTS, PASS_ODDS_PAYOUTS, DONT_ODDS_PAYOUTS } from './bets.js';
+import { PLACE_PAYOUTS, PASS_ODDS_PAYOUTS, DONT_ODDS_PAYOUTS, oddsMultipleForPoint } from './bets.js';
 import { PLACE_NUMBERS } from './strategy.js';
 
 // Deterministic PRNG (mulberry32) so seeded batches are reproducible.
@@ -65,15 +65,18 @@ export function simulateSession(strategy, opts, rng = Math.random) {
       }
     }
 
+    // Odds stake multiple for a given point under this strategy's odds policy.
+    const oddsMult = (p) => oddsMultipleForPoint(strategy.oddsMode, p);
+
     // Pass / don't-pass odds once a point is on.
     if (point !== null) {
-      if (pass && pass.odds === 0 && strategy.passLine.oddsMultiple > 0) {
-        const o = strategy.passLine.oddsMultiple * pass.amount;
-        if (stake(o)) pass.odds = o;
+      if (pass && pass.odds === 0 && strategy.passLine.takeOdds) {
+        const o = oddsMult(point) * pass.amount;
+        if (o > 0 && stake(o)) pass.odds = o;
       }
-      if (dontPass && dontPass.odds === 0 && strategy.dontPass.oddsMultiple > 0) {
-        const o = strategy.dontPass.oddsMultiple * dontPass.amount;
-        if (stake(o)) dontPass.odds = o;
+      if (dontPass && dontPass.odds === 0 && strategy.dontPass.takeOdds) {
+        const o = oddsMult(point) * dontPass.amount;
+        if (o > 0 && stake(o)) dontPass.odds = o;
       }
     }
 
@@ -88,16 +91,16 @@ export function simulateSession(strategy, opts, rng = Math.random) {
     // Top up odds on existing come / don't-come points.
     for (const c of Object.keys(comePoints)) {
       const cp = comePoints[c];
-      if (cp.odds === 0 && strategy.come.oddsMultiple > 0) {
-        const o = strategy.come.oddsMultiple * cp.amount;
-        if (stake(o)) cp.odds = o;
+      if (cp.odds === 0 && strategy.come.takeOdds) {
+        const o = oddsMult(Number(c)) * cp.amount;
+        if (o > 0 && stake(o)) cp.odds = o;
       }
     }
     for (const c of Object.keys(dontComePoints)) {
       const cp = dontComePoints[c];
-      if (cp.odds === 0 && strategy.dontCome.oddsMultiple > 0) {
-        const o = strategy.dontCome.oddsMultiple * cp.amount;
-        if (stake(o)) cp.odds = o;
+      if (cp.odds === 0 && strategy.dontCome.takeOdds) {
+        const o = oddsMult(Number(c)) * cp.amount;
+        if (o > 0 && stake(o)) cp.odds = o;
       }
     }
 
