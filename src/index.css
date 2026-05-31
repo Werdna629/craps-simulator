@@ -82,6 +82,13 @@ th { color: var(--muted); font-weight: 600; }
 .compare tr.current td { font-weight: 600; }
 .sub { color: var(--muted); font-weight: 400; font-size: 11px; }
 
+.worked-example { margin-top: 14px; font-size: 14px; }
+.worked-example summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.worked-example p { color: var(--muted); }
+.worked-example .mini { width: auto; margin: 8px 0; }
+.worked-example .mini th, .worked-example .mini td { padding: 4px 12px; text-align: center; }
+.worked-example .mini th:first-child, .worked-example .mini td:first-child { text-align: left; }
+
 /* Simulation view */
 .sim-controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 18px; }
 .sim-controls button {

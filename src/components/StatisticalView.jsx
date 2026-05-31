@@ -72,7 +72,13 @@ export default function StatisticalView({ strategy }) {
           </p>
           <table>
             <thead>
-              <tr><th>Odds policy</th><th>EV / roll<br /><span className="sub">(unchanged)</span></th><th>Action / roll</th><th>Edge on action<br /><span className="sub">(improves)</span></th></tr>
+              <tr>
+                <th>Odds policy</th>
+                <th>EV / roll<br /><span className="sub">(unchanged)</span></th>
+                <th>Action / roll</th>
+                <th>Edge on action<br /><span className="sub">(improves)</span></th>
+                <th>Lost per $100 wagered<br /><span className="sub">(improves)</span></th>
+              </tr>
             </thead>
             <tbody>
               {comparison.map((c) => (
@@ -81,10 +87,35 @@ export default function StatisticalView({ strategy }) {
                   <td className="neg">{signedMoney(c.evPerRoll)}</td>
                   <td>{money(c.actionPerRoll)}</td>
                   <td>{pct(c.blendedEdge)}</td>
+                  <td className="neg">{money(c.blendedEdge * 100)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          <details className="worked-example">
+            <summary>Why doesn't the dollar EV change?</summary>
+            <p>
+              Because the odds portion is a <strong>fair bet — its dollar EV is exactly $0 at any size</strong>,
+              so weighting it more heavily still adds nothing. Take a $10 pass line with the point on 4 (odds
+              pay 2:1, point hits 1/3 of the time):
+            </p>
+            <table className="mini">
+              <thead>
+                <tr><th>Odds taken</th><th>Point hits (⅓)</th><th>Seven-out (⅔)</th><th>EV of odds</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>$20 (2×)</td><td className="pos">+$40</td><td className="neg">−$20</td><td>⅓($40) − ⅔($20) = <strong>$0</strong></td></tr>
+                <tr><td>$50 (5×)</td><td className="pos">+$100</td><td className="neg">−$50</td><td>⅓($100) − ⅔($50) = <strong>$0</strong></td></tr>
+              </tbody>
+            </table>
+            <p>
+              So the whole bet's dollar EV stays at the flat bet's EV no matter how much odds you take. What
+              changes is the edge <em>as a percent of money wagered</em>: more fair money in the denominator
+              pulls the blended edge toward 0% (the last two columns). That's the real benefit of a table's
+              3-4-5× over a machine's 2× — not a better expected outcome, but more action at a fairer rate.
+            </p>
+          </details>
         </div>
       ) : (
         <p className="hint">
